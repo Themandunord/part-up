@@ -7,14 +7,17 @@ Template.app_partup_updates.onCreated(function() {
 
     template.partup = Partups.findOne(template.data.partupId);
 
+
+    // DON'T KNOW ANYMORE WHY THIS IS NECESSARY
+
+    this.loadingUpdates = new ReactiveVar(false);
     // Redundant, we need to refactor the triple sub.
-    this.loadingUpdates = new ReactiveVar(true);
-    this.updateSub = template.subscribe('updates.from_partup', template.data.partupId, undefined, {
-        onReady() {
-            template.loadingUpdates.set(false);
-        },
-    });
-    
+    // this.loadingUpdates = new ReactiveVar(true);
+    // this.updateSub = template.subscribe('updates.from_partup', template.data.partupId, undefined, {
+    //     onReady() {
+    //         template.loadingUpdates.set(false);
+    //     },
+    // });    
 
     // Updates model
     template.updates = {
@@ -355,7 +358,8 @@ Template.app_partup_updates.helpers({
         const instance = Template.instance();
         return instance.data.defaultFilter === 'conversations' ?
             instance.updates.loading.get() :
-        instance.loadingUpdates.get();
+            // uhhh?
+            instance.updates.loading.get(); // (instance.updates.view.get() || []).length === 0; // This is dangerous if there are no updates. Every partup has at least the very first 'partup_created' update.
     },
 });
 

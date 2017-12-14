@@ -35,13 +35,15 @@ Template.app_partup_activities.onCreated(function() {
         }
     };
 
+    template.activities.loading.set(false);
+    // Required for boardview, why not put this in the partup main template?;
     // Partup findOne and activities subscription
-    template.activities.loading.set(true);
-    template.subscribe('activities.from_partup', template.data.partupId, {
-        onReady: function() {
-            template.activities.loading.set(false);
-        }
-    });
+    // template.activities.loading.set(true);
+    // template.subscribe('activities.from_partup', template.data.partupId, {
+    //     onReady: function() {
+    //         template.activities.loading.set(false);
+    //     }
+    // });
 
     template.createNewActivity = function(laneId) {
         var userId = Meteor.userId();

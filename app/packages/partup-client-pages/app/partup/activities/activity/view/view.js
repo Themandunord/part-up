@@ -19,22 +19,26 @@ Template.ActivityView.onCreated(function() {
         Meteor.call('contributions.update', template.activityId, contribution, cb);
     };
 
-    this.contributionsReady = new ReactiveVar(false);
+    // this.contributionsReady = new ReactiveVar(true);
 
+    this.contributionsReady = new ReactiveVar(false);
     if (this.activityId) {
-        template.contributionSub = template.subscribe('contributions.for_activity', this.activityId, {
-            onReady() {
-                template.contributionsReady.set(true);
-            },
-        });
+        
+        // // REQUIRED FOR DETAIL BUT NOT BOARDVIEW!?
+
+        // template.subscribe('contributions.for_activity', this.activityId, {
+        //     onReady() {
+        //         template.contributionsReady.set(true);
+        //     },
+        // });
     } else {
         this.contributionsReady.set(true);
     }
 
-    if (this.activity && this.activity.files) {
-        template.imageSub = template.subscribe('images.many', this.activity.files.images);
-        template.fileSub = template.subscribe('files.many', this.activity.files.documents);
-    }
+    // if (this.activity && this.activity.files) {
+    //     template.imageSub = template.subscribe('images.many', this.activity.files.images);
+    //     template.fileSub = template.subscribe('files.many', this.activity.files.documents);
+    // }
 
     this.update = Updates.findOne({ _id: this.data.updateId || get(Template.instance(), 'data.activity.update_id') });
     template.hidden = {

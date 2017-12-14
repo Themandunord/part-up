@@ -1,6 +1,7 @@
 // import Sortable from 'sortablejs'; //'./node_modules/sortablejs/Sortable.min'
 import _ from 'lodash';
 import Sortable from './Sortable'
+import { setTimeout } from 'timers';
 
 Template.BoardView.onCreated(function () {
     var template = this;
@@ -26,11 +27,14 @@ Template.BoardView.onCreated(function () {
         });
     });
 
-    template.subscribe('board.for_partup_id', partupId, {
-        onReady() {
-            template.loaded.set(true);
-        },
-    });
+    // setTimeout(() => {
+    //     template.loaded.set(true);
+    // }, 1000);
+    // template.subscribe('board.for_partup_id', partupId, {
+    //     onReady() {
+    //         template.loaded.set(true);
+    //     },
+    // });
 
     var arraysAreTheSame = function (arr1, arr2) {
         return JSON.stringify(arr1) === JSON.stringify(arr2);
