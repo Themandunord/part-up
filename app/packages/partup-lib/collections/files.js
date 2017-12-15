@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import _, { concat, get } from 'lodash';
 import { Random } from 'meteor/random';
 
 /**
@@ -17,8 +17,13 @@ Files = new Meteor.Collection('cfs.files.filerecord'); // Collection name is for
  * @return {Mongo.Cursor}
  */
 Files.findForUpdate = function(update) {
-    const files = update.type_data.files || [];
+    const files = concat(update.type_data.files, update.type_data.documents) || [];
     return Files.find({ _id: { $in: files } });
+};
+
+Files.findForActivity = function (activity) {
+    const { documents = [] } = get(activity, 'files');
+    return Files.find({ _id: { $in: documents } });
 };
 
 Files.getForUpdate = function (updateId) {

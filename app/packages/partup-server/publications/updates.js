@@ -74,6 +74,6 @@ Meteor.publishComposite('updates.from_partup', function(partupId, parameters, ac
 
             return Updates.findForPartup(partup, parameters, self.userId);
         },
-        children: updateChildren
+        children: updateChildren,
     };
 });

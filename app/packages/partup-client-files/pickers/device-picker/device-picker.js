@@ -43,29 +43,36 @@ Template.devicePicker.onRendered(function() {
                     return;
                 }
 
-                if (Partup.helpers.files.isImage(file)) {
-                    template.subscribe('images.one', response.fileId, {
-                        onReady() {
-                            const image = Images.findOne({ _id: response.fileId });
-                            if (image) {
-                                template.controller.addFilesToCache(image);
-                            } else {
-                                throw new Error('devicePicker: could not find image');
-                            }
-                        },
-                    });
-                } else {
-                    template.subscribe('files.one', response.fileId, {
-                        onReady() {
-                            const doc = Files.findOne({ _id: response.fileId });
-                            if (doc) {
-                                template.controller.addFilesToCache(doc);
-                            } else {
-                                throw new Error('devicePicker: could not find file');
-                            }
-                        },
-                    });
-                }
+                const collection = Partup.helpers.files.isImage(file) ? 'images' : 'files';
+                Meteor.call(`${collection}.get`, response.fileId, function(error, res) {
+                    if (res && res.length) {
+                        template.controller.addFilesToCache(res);
+                    }
+                });
+
+                // if (Partup.helpers.files.isImage(file)) {
+                //     template.subscribe('images.one', response.fileId, {
+                //         onReady() {
+                //             const image = Images.findOne({ _id: response.fileId });
+                //             if (image) {
+                //                 template.controller.addFilesToCache(image);
+                //             } else {
+                //                 throw new Error('devicePicker: could not find image');
+                //             }
+                //         },
+                //     });
+                // } else {
+                //     template.subscribe('files.one', response.fileId, {
+                //         onReady() {
+                //             const doc = Files.findOne({ _id: response.fileId });
+                //             if (doc) {
+                //                 template.controller.addFilesToCache(doc);
+                //             } else {
+                //                 throw new Error('devicePicker: could not find file');
+                //             }
+                //         },
+                //     });
+                // }
             },
             UploadComplete(uploader) {
                 template.controller.uploading.set(false);

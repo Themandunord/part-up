@@ -31,7 +31,10 @@ Meteor.publishComposite('activities.from_partup', function(partupId, accessToken
                         {find: Images.findForUser}
                     ]},
                 ]}
-            ]}
+            ]},
+            { find: Images.findForActivity },
+            { find: Files.findForActivity },
+
         ]
     };
 });

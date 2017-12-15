@@ -53,7 +53,7 @@ Template.Update.helpers({
             contributor = Meteor.users.findOne(contribution.upper_id);
         }
         var user = Meteor.user();
-        self._update = {
+        return {
             data: function() {
                 return update;
             },
@@ -148,7 +148,6 @@ Template.Update.helpers({
                 return templateInstance.data.FILES_EXPANDED;
             }
         };
-        return self._update;
     },
     format() {
         return function (content) {

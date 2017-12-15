@@ -48,7 +48,7 @@ class _FileController {
         this.removedFromCache = new ReactiveVar([]);
 
         // internal sub handler
-        this._subs = {};
+        // this._subs = {};
     }
     
     /**
@@ -77,53 +77,83 @@ class _FileController {
                             code: 1,
                             message: `this file has an invalid file service: '${file.service}', see 'Partup.helpers.files.FILE_SERVICES' for more information`,
                         });
-                    } else if (Partup.helpers.files.isImage(file)) {
-                        Meteor.call('images.insertByUrl', file, function(error, result) {
-                            if (error) {
-                                reject(error);
-                            } else if (!result || !result._id) {
-                                reject({
-                                    ...baseError,
-                                    code: 1,
-                                    message: "meteor method 'images.insertByUrl' failed, no _id in result",
+                        return;
+                    };
+                    
+                    const collection = Partup.helpers.files.isImage(file);
+
+                    Meteor.call(`${collection}.insert`, file, function (error, result) {
+                        if (error) {
+                            reject(error);
+                        } else if (!result || !result._id) {
+                            reject({
+                                ...baseError,
+                                code: 1,
+                                message: `meteor method ${collection}.insert' failed, no _id in result`,
+                            });
+                        } else {
+                            if (collection === 'images') {
+                                Meteor.call('images.get', result._id, function (error, res) {
+                                    if (res && res._id) {
+                                        resolve(res);
+                                    } else {
+                                        reject(error);
+                                    }
                                 });
                             } else {
-                                const imageId = result._id;
-
-                                self._subs[imageId] = Meteor.subscribe('images.one', imageId, {
-                                    onReady() {
-                                        const insertedImage = Images.findOne(imageId);
-
-                                        if (insertedImage) {
-                                            resolve(insertedImage);
-                                        } else {
-                                            reject({
-                                                ...baseError,
-                                                code: 1,
-                                                message: `cannot find image with _id: ${imageId} after inserting`,
-                                            });
-                                        }
-                                    },
-                                });
-                            }
-                        });
-                    } else {
-                        Meteor.call('files.insert', file, function(error, result) {
-                            if (error) {
-                                reject(error);
-                            } else if (!result || !result._id) {
-                                reject({
-                                    ...baseError,
-                                    message: "method 'files.insert' failed, no _id in result",
-                                });
-                            } else {
-                                // Don't need to fetch dropbox or drive files, all data is already present.
                                 resolve(Object.assign({
                                     _id: result._id,
                                 }, file));
                             }
-                        });
-                    }
+                        }
+                    });
+                    // else if (Partup.helpers.files.isImage(file)) {
+                    //     Meteor.call('images.insertByUrl', file, function(error, result) {
+                    //         if (error) {
+                    //             reject(error);
+                    //         } else if (!result || !result._id) {
+                    //             reject({
+                    //                 ...baseError,
+                    //                 code: 1,
+                    //                 message: "meteor method 'images.insertByUrl' failed, no _id in result",
+                    //             });
+                    //         } else {
+                    //             const imageId = result._id;
+
+                    //             // self._subs[imageId] = Meteor.subscribe('images.one', imageId, {
+                    //             //     onReady() {
+                    //             //         const insertedImage = Images.findOne(imageId);
+
+                    //             //         if (insertedImage) {
+                    //             //             resolve(insertedImage);
+                    //             //         } else {
+                    //             //             reject({
+                    //             //                 ...baseError,
+                    //             //                 code: 1,
+                    //             //                 message: `cannot find image with _id: ${imageId} after inserting`,
+                    //             //             });
+                    //             //         }
+                    //             //     },
+                    //             // });
+                    //         }
+                    //     });
+                    // } else {
+                    //     Meteor.call('files.insert', file, function(error, result) {
+                    //         if (error) {
+                    //             reject(error);
+                    //         } else if (!result || !result._id) {
+                    //             reject({
+                    //                 ...baseError,
+                    //                 message: "method 'files.insert' failed, no _id in result",
+                    //             });
+                    //         } else {
+                    //             // Don't need to fetch dropbox or drive files, all data is already present.
+                    //             resolve(Object.assign({
+                    //                 _id: result._id,
+                    //             }, file));
+                    //         }
+                    //     });
+                    // }
                 } else {
                     reject({
                         ...baseError,

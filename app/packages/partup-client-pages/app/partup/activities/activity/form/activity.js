@@ -27,7 +27,7 @@ Template.activityForm.onCreated(function () {
     this.charactersRemaining.set('description', (this.maxLength.description - (description ? description.length : 0)));
 
     if (documents.length) {
-        Meteor.call('files.get_many', documents, function(error, result) {
+        Meteor.call('files.get', documents, function(error, result) {
             if (result && result.length) {
                 instance.fileController.addFilesToCache(result);
                 return;
@@ -38,7 +38,7 @@ Template.activityForm.onCreated(function () {
         });
     }
     if (images.length) {
-        Meteor.call('images.get_many', images, function(error, result) {
+        Meteor.call('images.get', images, function(error, result) {
             if (result && result.length) {
                 instance.fileController.addFilesToCache(result);
                 return;

@@ -1,3 +1,5 @@
+import { get } from 'lodash';
+
 /**
  * Images are entities stored under each object that contains one or more images
  *
@@ -97,6 +99,11 @@ Images.findForUpdate = function(update) {
     }
 
     return Images.find({_id: {'$in': images}});
+};
+
+Images.findForActivity = function (activity) {
+    const { images = [] } = get(activity, 'files');
+    return Images.find({ _id: { $in: images } });
 };
 
 Images.getForUpdate = function (update) {

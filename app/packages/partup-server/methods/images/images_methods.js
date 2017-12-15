@@ -1,3 +1,7 @@
+import {
+    flatMap,
+} from 'lodash';
+
 Meteor.methods({
 
     /**
@@ -43,7 +47,9 @@ Meteor.methods({
         }
         throw new Meteor.Error(400, 'unauthorized');
     },
-    'images.get_many'(ids) {
+    'images.get'(...ids) {
+        ids = flatMap(ids);
+
         check(ids, [String]);
         this.unblock();
 

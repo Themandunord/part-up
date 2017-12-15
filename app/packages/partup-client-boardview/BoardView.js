@@ -27,14 +27,10 @@ Template.BoardView.onCreated(function () {
         });
     });
 
-    // setTimeout(() => {
-    //     template.loaded.set(true);
-    // }, 1000);
-    // template.subscribe('board.for_partup_id', partupId, {
-    //     onReady() {
-    //         template.loaded.set(true);
-    //     },
-    // });
+    // TODO: This hack makes dragging cards possible after moving the sub to the partup template.
+    setTimeout(() => {
+        template.loaded.set(true);
+    }, 1500);
 
     var arraysAreTheSame = function (arr1, arr2) {
         return JSON.stringify(arr1) === JSON.stringify(arr2);
@@ -245,10 +241,32 @@ Template.BoardView.onCreated(function () {
         });
     };
 
+    // const mapActivitiesToLanes = (lanes) => {
+    //     const { activities = [] } = this.data;
+    //     activities.forEach((activity) => {
+    //         if (!activity.isRemoved()) {
+    //             const lane = _.find(lanes, l => l._id === activity.lane_id);
+
+    //             (lane.activities || (lane.activities = [])).push(activity);
+    //         }
+    //     });
+    // };
+
+    // const setLaneActivityCount = (lane) => {
+    //     lane.activitiesCount = (lane.activities || []).length;
+    //     return lane;
+    // };
+
+
     template.lanesCollection = new ReactiveVar([]);
     template.updateLanesCollection = function () {
         var board = Boards.findOne();
         if (!board) return;
+
+        // const lanes = Lanes.find({ _id: { $in: ((board && board.lanes) || []) } }).fetch();
+        // mapActivitiesToLanes(lanes);
+        // lanes.map(setLaneActivityCount);
+
         var lanes = (board && board.lanes || []).map(function (laneId, laneIndex) {
             var lane = Lanes.findOne(laneId);
             if (!lane) return [];
@@ -261,6 +279,7 @@ Template.BoardView.onCreated(function () {
 
             return lane;
         });
+
         template.lanesCollection.set(lanes);
     };
 
@@ -280,6 +299,10 @@ Template.BoardView.onCreated(function () {
         var dragging = template.dragging.get();
         if (!board || dragging) return;
 
+        // const lanes = Lanes.find({ _id: { $in: ((board && board.lanes) || []) } }).fetch();
+        // mapActivitiesToLanes(lanes);
+        // lanes.map(setLaneActivityCount);
+
         var lanes = (board && board.lanes || []).map(function (laneId, laneIndex) {
             var lane = Lanes.findOne(laneId);
 
@@ -293,6 +316,7 @@ Template.BoardView.onCreated(function () {
 
             return lane;
         });
+
         template.lanesCollection.set(lanes);
     });
 });

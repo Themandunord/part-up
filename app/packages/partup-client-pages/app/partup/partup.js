@@ -55,6 +55,7 @@ Template.app_partup.onCreated(function () {
         });
     });
 
+    template.subscribe('updates.from_partup', template.data.partupId);
     template.subscribe('board.for_partup_id', template.data.partupId);
     template.subscribe('activities.from_partup', template.data.partupId);
 });

@@ -1,4 +1,7 @@
 import { Random } from 'meteor/random';
+import {
+    flatMap,
+} from 'lodash';
 
 Meteor.methods({
     'files.insert'(file) {
@@ -40,7 +43,9 @@ Meteor.methods({
         }
         throw new Meteor.Error(401, 'unauthorized');
     },
-    'files.get_many'(ids) {
+    'files.get'(...ids) {
+        ids = flatMap(ids);
+
         check(ids, [String]);
         this.unblock();
 
@@ -48,7 +53,6 @@ Meteor.methods({
             const cursor = Files.find({ _id: { $in: ids } });
             return cursor.fetch();
         }
-
         throw new Meteor.Error(401, 'unauthorized');
-    },
+    }
 });
